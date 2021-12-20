@@ -346,7 +346,7 @@ STATIC uint32_t fill_appbuf_from_ringbuf(machine_i2s_obj_t *self, mp_buffer_info
 exit:
     return num_bytes_copied_to_appbuf;
 }
-
+/* 
 // function is used in IRQ context
 STATIC void fill_appbuf_from_ringbuf_non_blocking(machine_i2s_obj_t *self) {
 
@@ -387,7 +387,7 @@ STATIC void fill_appbuf_from_ringbuf_non_blocking(machine_i2s_obj_t *self) {
             mp_sched_schedule(self->callback_for_non_blocking, MP_OBJ_FROM_PTR(self));
         }
     }
-}
+} */
 
 STATIC uint32_t copy_appbuf_to_ringbuf(machine_i2s_obj_t *self, mp_buffer_info_t *appbuf) {
 
@@ -438,8 +438,8 @@ STATIC void copy_appbuf_to_ringbuf_non_blocking(machine_i2s_obj_t *self) {
             mp_sched_schedule(self->callback_for_non_blocking, MP_OBJ_FROM_PTR(self));
         }
     }
-}
-
+} 
+/* 
 // function is used in IRQ context
 STATIC void empty_dma(machine_i2s_obj_t *self, ping_pong_t dma_ping_pong) {
     uint16_t dma_buffer_offset = 0;
@@ -461,7 +461,7 @@ STATIC void empty_dma(machine_i2s_obj_t *self, ping_pong_t dma_ping_pong) {
             ringbuf_push(&self->ring_buffer, dma_buffer_p[i]);
         }
     }
-}
+} */
 
 // function is used in IRQ context
 STATIC void feed_dma(machine_i2s_obj_t *self, ping_pong_t dma_ping_pong) {
@@ -512,7 +512,7 @@ STATIC void feed_dma(machine_i2s_obj_t *self, ping_pong_t dma_ping_pong) {
 
     // flush cache to RAM so DMA can read the sample data
     MP_HAL_CLEAN_DCACHE(dma_buffer_p, SIZEOF_HALF_DMA_BUFFER_IN_BYTES);
-}
+} 
 
 STATIC bool i2s_init(machine_i2s_obj_t *self) {
 
@@ -588,7 +588,7 @@ STATIC bool i2s_init(machine_i2s_obj_t *self) {
     }
 
 }
-
+/* 
 void HAL_I2S_ErrorCallback(I2S_HandleTypeDef *hi2s) {
     uint32_t errorCode = HAL_I2S_GetError(hi2s);
     printf("I2S Error = %ld\n", errorCode);
@@ -611,8 +611,8 @@ void HAL_I2S_RxCpltCallback(I2S_HandleTypeDef *hi2s) {
     if ((self->io_mode == NON_BLOCKING) && (self->non_blocking_descriptor.copy_in_progress)) {
         fill_appbuf_from_ringbuf_non_blocking(self);
     }
-}
-
+} */
+/*
 void HAL_I2S_RxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {
     machine_i2s_obj_t *self;
     if (hi2s->Instance == I2S1) {
@@ -631,7 +631,7 @@ void HAL_I2S_RxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {
         fill_appbuf_from_ringbuf_non_blocking(self);
     }
 }
-
+*/
 void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s) {
     machine_i2s_obj_t *self;
 
@@ -652,7 +652,7 @@ void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s) {
     feed_dma(self, BOTTOM_HALF);
 }
 
-void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {
+ void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {
     machine_i2s_obj_t *self;
     if (hi2s->Instance == I2S1) {
         self = MP_STATE_PORT(machine_i2s_obj)[0];
@@ -669,7 +669,7 @@ void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {
     // top half of buffer now emptied,
     // safe to fill the top half while the bottom half of buffer is being emptied
     feed_dma(self, TOP_HALF);
-}
+} 
 
 STATIC void machine_i2s_init_helper(machine_i2s_obj_t *self, size_t n_pos_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
 
